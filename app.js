@@ -12,24 +12,24 @@ app.use(cors());
 
 const port = 8000;
 
-let categories = [
-  {
-    id: 1,
-    name: "Дэлхийн мэдээ",
-  },
-  {
-    id: 2,
-    name: "Гэмт хэрэг",
-  },
-  {
-    id: 3,
-    name: "Эерэг",
-  },
-];
+// let categories = [
+//   {
+//     id: 1,
+//     name: "Дэлхийн мэдээ",
+//   },
+//   {
+//     id: 2,
+//     name: "Гэмт хэрэг",
+//   },
+//   {
+//     id: 3,
+//     name: "Эерэг",
+//   },
+// ];
 
 let articles = [
   {
-    id: "-T2fQMh2_66ceol8W_k6g",
+    id: "1",
     imageUrl:
       "https://eguur.mn/wp-content/uploads/2023/01/%D0%91%D0%B8%D0%B1%D0%B5%D1%80-%C2%A5-1024x642.jpeg",
     categoryId: 0,
@@ -40,7 +40,7 @@ let articles = [
     text: "Жастин Бибер өөрийн хөгжмийн эрхийг Blackstone-ийн дэмжлэгтэй Hipgnosis Songs Capital-д 200 сая ам.доллараар зарсан тухай зарлалаа. Энэхүү гэрээнд Биберийн өөрийн хэвлэн нийтлэх болон бичсэн хөгжмийн сангийн хувьцаа, Биберийн хэвлэх зохиогчийн эрх, 2021 оны 12-р сарын 31-нээс өмнө гаргасан 290 гаруй эрхүүд багтсан болно. Биберийн дууг Universal Music үргэлжлүүлэн удирдан явуулах болно гэж эх сурвалжууд мэдээлэв. Түүний мастер бичлэгүүд мөнхөд UMG-ийн мэдэлд байх болно.",
   },
   {
-    id: "ZmcbGttLi-49h4wZUdfxt",
+    id: "2",
     imageUrl: "https://eguur.mn/wp-content/uploads/2023/01/huuli-1-768x512.jpg",
     categoryId: 1,
     name: "hohoho",
@@ -90,7 +90,7 @@ let articles = [
 `,
   },
   {
-    id: "qmH91Z4UoHCLitEfuN2QN",
+    id: "3",
     imageUrl: "https://eguur.mn/wp-content/uploads/2023/01/tsagdaa.jpg",
     categoryId: 2,
     name: "hohoho",
@@ -106,7 +106,7 @@ let articles = [
   },
 
   {
-    id: "fPb_Lf8489StXkk0Yj3dV",
+    id: "4",
     imageUrl: "https://eguur.mn/wp-content/uploads/2023/01/eco-tulsh-vcd.jpg",
     categoryId: 3,
     name: "hohoho",
@@ -128,10 +128,10 @@ let articles = [
 
 let nextCarId = articles.length;
 
-app.get("/categories", (request, response) => {
-  response.status(200);
-  response.json(categories);
-});
+// app.get("/categories", (request, response) => {
+//   response.status(200);
+//   response.json(categories);
+// });
 
 app.get("/articles", (request, response) => {
   response.status(200);
@@ -140,11 +140,11 @@ app.get("/articles", (request, response) => {
 
 app.get("/articles/:id", (req, res) => {
   const { id } = req.params;
-  let result;
+  let result = null;
   for (const art of articles) {
-    console.log(art.id);
-    if (art.id === id) {
+    if (id === art.id) {
       result = art;
+      break;
     }
   }
   res.json(result);
@@ -161,6 +161,33 @@ app.post("/articles", jsonParser, (req, res) => {
   const newArticles = { id: nextCarId++, name };
   articles.push(newArticles);
   res.send(newArticles);
+});
+
+app.put("/articles/:id", (req, res) => {
+  const { id } = req.params;
+  let result = null;
+  for (const art of articles) {
+    if (id === art.id) {
+      result = art;
+      break;
+    }
+  }
+  res.json(result);
+});
+
+app.put("/articles/:id", (res, req) => {
+  const { id } = req.params;
+  const { name } = req.body;
+
+  const index = articles.findIndex((item) => item.id === Number(id));
+  if (index === -2) {
+    res.status(400).json("Bad requist");
+  } else {
+    const updateCategory = articles[index];
+    updateCategory.name = name;
+    articles[index] = updateCategory;
+    res.json(updateCategory);
+  }
 });
 
 app.listen(port, () => {
