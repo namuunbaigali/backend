@@ -12,20 +12,16 @@ app.use(cors());
 
 const port = 8000;
 
-// let categories = [
-//   {
-//     id: 1,
-//     name: "Дэлхийн мэдээ",
-//   },
-//   {
-//     id: 2,
-//     name: "Гэмт хэрэг",
-//   },
-//   {
-//     id: 3,
-//     name: "Эерэг",
-//   },
-// ];
+const fs = require("fs");
+const updateCategoriesFile = () => {
+  fs.writeFileSync("categoryData.json", JSON.stringify(categories));
+};
+
+// let categories = JSON.parse(fs.readFileSync("category.data.json", "utf8"));
+
+app.get("/categories", (req, res) => {
+  res.json(categories);
+});
 
 let articles = [
   {
@@ -128,14 +124,14 @@ let articles = [
 
 let nextCarId = articles.length;
 
-// app.get("/categories", (request, response) => {
-//   response.status(200);
-//   response.json(categories);
-// });
+app.get("/categories", (req, res) => {
+  res.status(200);
+  res.json(categories);
+});
 
-app.get("/articles", (request, response) => {
-  response.status(200);
-  response.json(articles);
+app.get("/articles", (req, res) => {
+  res.status(200);
+  res.json(articles);
 });
 
 app.get("/articles/:id", (req, res) => {
@@ -153,6 +149,7 @@ app.get("/articles/:id", (req, res) => {
 app.delete("/articles/:id", (res, req) => {
   const { id } = req.params;
   articles = articles.filter((art) => art.id !== id);
+  updateCategoriesFile();
   res.json(id);
 });
 
@@ -160,6 +157,8 @@ app.post("/articles", jsonParser, (req, res) => {
   const { name } = req.body;
   const newArticles = { id: nextCarId++, name };
   articles.push(newArticles);
+  updateCategoriesFile();
+
   res.send(newArticles);
 });
 
@@ -188,6 +187,27 @@ app.put("/articles/:id", (res, req) => {
     articles[index] = updateCategory;
     res.json(updateCategory);
   }
+});
+let products = JSON.parse(fs.readFileSync("MOCK_DATA.json", "utf-8"));
+app.get("/products", (req, res) => {
+  let { pageSize, page } = req.query;
+  pageSize = Number(pageSize) || 10;
+  page = Number(page) || 1;
+
+  let start, end;
+
+  start = (page - 1) * pageSize;
+  end = page * pageSize;
+
+  const item = products.slice(start, end);
+
+  res.json({
+    total: products.length,
+    totalPage: Math.ceil(products.length / pageSize),
+    page,
+    pageSize,
+    item,
+  });
 });
 
 app.listen(port, () => {
