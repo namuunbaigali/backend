@@ -13,11 +13,11 @@ app.use(cors());
 const port = 8000;
 
 const fs = require("fs");
+let categories = JSON.parse(fs.readFileSync("categoryData.json", "utf8"));
+
 const updateCategoriesFile = () => {
   fs.writeFileSync("categoryData.json", JSON.stringify(categories));
 };
-
-// let categories = JSON.parse(fs.readFileSync("category.data.json", "utf8"));
 
 app.get("/categories", (req, res) => {
   res.json(categories);
@@ -190,7 +190,7 @@ app.put("/articles/:id", (res, req) => {
 });
 let products = JSON.parse(fs.readFileSync("MOCK_DATA.json", "utf-8"));
 app.get("/products", (req, res) => {
-  let { pageSize, page } = req.query;
+  let { pageSize, page, priceTo, priceFrom, q } = req.query;
   pageSize = Number(pageSize) || 10;
   page = Number(page) || 1;
 
@@ -199,11 +199,22 @@ app.get("/products", (req, res) => {
   start = (page - 1) * pageSize;
   end = page * pageSize;
 
-  const item = products.slice(start, end);
+  const newProducts = products.filter((product) => {
+    console.log(product.price);
+    let matching = true;
+    if (q) {
+      matching = product.name.toLowerCase().includes(q.toLowerCase());
+    }
+    if (q) {
+      matching = product.price;
+    }
+    return matching;
+  });
+  const item = newProducts.slice(start, end);
 
   res.json({
-    total: products.length,
-    totalPage: Math.ceil(products.length / pageSize),
+    total: newProducts.length,
+    totalPage: Math.ceil(newProducts.length / pageSize),
     page,
     pageSize,
     item,
