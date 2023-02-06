@@ -1,10 +1,7 @@
 const express = require("express");
 
 const cors = require("cors");
-
-const bodyParser = require("body-parser");
-
-const jsonParser = bodyParser.json();
+const fs = require("fs");
 
 const app = express();
 
@@ -12,8 +9,9 @@ app.use(cors());
 
 const port = 8000;
 
-const fs = require("fs");
 let categories = JSON.parse(fs.readFileSync("categoryData.json", "utf8"));
+
+let nextCatId = categories.length;
 
 const updateCategoriesFile = () => {
   fs.writeFileSync("categoryData.json", JSON.stringify(categories));
@@ -23,204 +21,168 @@ app.get("/categories", (req, res) => {
   res.json(categories);
 });
 
-let articles = [
-  {
-    id: "1",
-    imageUrl:
-      "https://eguur.mn/wp-content/uploads/2023/01/%D0%91%D0%B8%D0%B1%D0%B5%D1%80-%C2%A5-1024x642.jpeg",
-    categoryId: 0,
-
-    name: "hohoho",
-    description:
-      "Жастин Бибер өөрийн хөгжмийн эрхээ 200 сая ам.доллараар заржээ",
-    text: "Жастин Бибер өөрийн хөгжмийн эрхийг Blackstone-ийн дэмжлэгтэй Hipgnosis Songs Capital-д 200 сая ам.доллараар зарсан тухай зарлалаа. Энэхүү гэрээнд Биберийн өөрийн хэвлэн нийтлэх болон бичсэн хөгжмийн сангийн хувьцаа, Биберийн хэвлэх зохиогчийн эрх, 2021 оны 12-р сарын 31-нээс өмнө гаргасан 290 гаруй эрхүүд багтсан болно. Биберийн дууг Universal Music үргэлжлүүлэн удирдан явуулах болно гэж эх сурвалжууд мэдээлэв. Түүний мастер бичлэгүүд мөнхөд UMG-ийн мэдэлд байх болно.",
-  },
-  {
-    id: "2",
-    imageUrl: "https://eguur.mn/wp-content/uploads/2023/01/huuli-1-768x512.jpg",
-    categoryId: 1,
-    name: "hohoho",
-    description:
-      "Төрсөн эгчдээ архи өглөө гэж бусдыг зодсон хүүг ялаас чөлөөллөө",
-    text: `Өсвөр насны хүү Х нь Э гэгчийг төрсөн эгчдээ архи өгсөн гэх шалтгаанаар зодсон.
-     Үүний улмаас Э-гийн зовхинд цус хуралт, зөөлөн эдийн няцрал, дух, уруул, баруун бугуй, 
-     зүүн сарвуунд зулгаралт бүхий хөнгөн хохирол учруулсан үйлдэлд прокуророос Эрүүгийн 
-     хуулийн тусгай ангийн 11.6 дугаар зүйлийн 1 дэх хэсэгт заасан Хүний эрүүл мэндэд 
-     хөнгөн хохирол санаатай учруулсан гэмт хэрэгт холбогдуулан яллах дүгнэлт үйлдэн шүүхэд шилжүүлжээ.
-
-Шүүх хавтаст хэрэгт авагдсан баримтууд болон хэргийн үйл баримтад дүгнэлт хийн, 
-өсвөр насны шүүгдэгчийг гэмт хэрэг үйлдсэн гэм буруутайд тооцож, шүүгдэгчийг ялаас чөлөөлж шийдвэрлэв.  
-
-Учир нь Эрүүгийн хуулийн тусгай ангийн 11.6 дугаар зүйлийн 1 дэх хэсэгт заасан 
-гэмт хэрэг нь хүний эрүүл мэндийн халдашгүй байдлын эсрэг гэмт хэрэг бөгөөд гэмт 
-этгээд нь хохирогчийн бие махбод буюу эрүүл мэндэд Шүүх эмнэлгийн гэмтлийн зэрэг 
-тогтоох журамд заасан хөнгөн гэмтлийг санаатай учруулсан байх шинжийг шаарддаг ба
- шүүх хуралдааны явцад өсвөр насны шүүгдэгч нь хохирогчийг төрсөн эгчид нь архи 
- уулгасан гэх шалтгаанаар зодсон гэдгээ хүлээн зөвшөөрсөн, шүүх эмнэлгийн шинжээчийн 
- дүгнэлтээр хохирогч Э-н эрүүл мэндэд хөнгөн хохирол учирсан болох нь тогтоогдсон тул 
- өсвөр насны шүүгдэгч Х-г Эрүүгийн хуулийн тусгай ангийн 11.6 дугаар зүйлийн 1 дэх хэсэгт 
- заасан Хүний эрүүл мэндэд хөнгөн хохирол санаатай учруулсан гэмт хэрэг үйлдсэн гэм буруутайд тооцсон байна.
-
-
-Харин өсвөр насны шүүгдэгчид оногдуулах эрүүгийн хариуцлагын тухайд, 
-Эрүүгийн хуулийн ерөнхий ангийн 6.1 дүгээр зүйлийн 2 дахь хэсэгт 
-Эрүүгийн хариуцлага хүлээлгэхэд гэмт хэрэг үйлдсэн нөхцөл байдал, учирсан 
-хохирол, хор уршгийн шинж чанар, гэмт хэрэг үйлдсэн хүний хувийн байдал,
- эрүүгийн хариуцлагыг хөнгөрүүлэх, хүндрүүлэх нөхцөл байдлыг тал бүрээс нь
-  харгалзан үзнэ гэж, мөн хуулийн 6.7 дугаар зүйлийн 1 дэх хэсэгт Шүүх гэмт хэрэг үйлдсэн нь тогтоогдсон,
-   гэм буруугаа хүлээн зөвшөөрсөн хүний гэмт хэрэг үйлдсэн нөхцөл байдал,
-    учруулсан хохирол, хор уршгийн шинж чанар, хувийн байдал, мөрдөн шалгах 
-    ажиллагааг шуурхай явуулж гэмт хэргийг нотлоход дэмжлэг үзүүлсэн байдлыг 
-    харгалзан дараах байдлаар эрүүгийн хариуцлагыг хөнгөрүүлж, эсхүл эрүүгийн хариуцлагаас чөлөөлж болно 
-гэж тус тус заасан ба хавтаст хэрэгт авагдсан баримтуудаар шүүгдэгчийн 
-төрсөн эгч болох М, хохирогч Э нар нь оюуны хүндэвтэр хомсдолтой болох нь тогтоогдсон мөн хохирогч 
-Э-г хөгжлийн бэрхшээлтэй буюу оюуны хүндэвтэр хомсдолтой болохыг өсвөр насны шүүгдэгч мэдээгүй, 
-харин хохирогчийг түүний төрсөн эгчийн оюуны хомсдолтой байдлыг далимдуулан архи уулгасан гэж 
-бодсоны улмаас хохирогчийг зодож, эрүүл мэндэд нь хохирол учруулсан үйл баримт тогтоогдсон 
-буюу өсвөр насны шүүгдэгчийн хувийн байдал, гэмт хэрэг үйлдсэн нөхцөл байдал, гэмт хэргийн 
-нийгмийн аюулын шинж чанар, мөн өсвөр насны шүүгдэгчийн анх удаа хөнгөн гэмт хэрэгт холбогдсон 
-байдал, мөрдөн шалгах ажиллагааны явцад болон шүүх хуралдаанд гэм буруугаа хүлээн зөвшөөрсөн, 
-хохирогчид учирсан хохирлыг төлж барагдуулсан зэрэг нөхцөл байдлыг харгалзан өсвөр насны 
-шүүгдэгчийг ялаас чөлөөлж шийдвэрлэв.
-
-`,
-  },
-  {
-    id: "3",
-    imageUrl: "https://eguur.mn/wp-content/uploads/2023/01/tsagdaa.jpg",
-    categoryId: 2,
-    name: "hohoho",
-    description:
-      "Групп чатад хүүхдүүдийг нэмж, садар самуунд уруу татсан этгээдэд ял оноожээ",
-    text: `Сүүлийн үед бага насны хүүхдийг цахим орчныг ашиглан биеэ үнэлүүлэх, садар самуунд уруу татах гэмт хэргүүд үйлдэгдсээр байна.
-
-Тухайлбал, иргэн Э нь фэйсбүүкийн хуурамч хаягуудыг ашиглан “ХҮҮХДҮҮД” нэртэй нууц групп чат 2022 оны 02 дугаар сард шинээр нээж тус групп чатанд бага, өсвөр насны хүүхдүүдийн садар самуун агууламж бүхий дүрс, бичлэгийг байршуулж, хадгалсан.
-
-Улмаар “ХҮҮХДҮҮД” нэртэй групп чатанд төлбөртэйгээр иргэдийг оруулж бага, өсвөр насны хүүхдүүдийн садар самуун агууламж бүхий дүрс, бичлэгийг үзүүлсэн хэргийг үйлджээ.
-
-Баянзүрх дүүргийн Эрүүгийн хэргийн анхан шатны шүүхийн тогтоолоор Эрүүгийн хуулийн тусгай ангийн 16.9 дүгээр зүйлийн 2 дахь хэсгийн 2.1 дэх хэсгээр 2 жилийн хорих ял оногдуулсан байна.`,
-  },
-
-  {
-    id: "4",
-    imageUrl: "https://eguur.mn/wp-content/uploads/2023/01/eco-tulsh-vcd.jpg",
-    categoryId: 3,
-    name: "hohoho",
-    description:
-      "М.Цэнгүүн: Хаягдал цаас, үртэс, тосоор утаагүй, эко түлш үйлдвэрлэдэг",
-    text: `-Эрдэнэтээс өөр аймгуудад болон хот руу үйлдвэрлэлээ тэлэх боломж бий юу?
-
--Ойрын гурван жилдээ Эрдэнэтийн айл өрхүүдээ энэхүү түлшээр бүрэн хангах зорилго тавин ажиллаж байна. Өөрөөр хэлбэл бусад аймаг болон нийслэл рүү өргөжүүлж чадаагүй байгаа. Бид өнгөрсөн зургаадугаар сард гарааны бизнес төслийн уралдаанд оролцож шалгараад 40 сая төгрөгийн дэмжлэг авч үйлдвэрийн тоног төхөөрөмж зэрэг асуудлуудаа шийдэж эхэлсэн. Мөн аравдугаар сард гэр бүл хүүхэд залуучуудын газраас зохион байгуулсан "NextGen-2022" улсын уралдаанд амжилттай оролцож 20 сая төгрөгийн буцалтгүй дэмжлэг авч чадсан.
-
--Цаасны олдоц хангалттай хэмжээнд байж чадаж байна уу?
-
--Цаасны хаягдал ихээр гардаг томоохон газруудтай хамтарч ажилладаг болсон. Өөрөөр хэлбэл хогийн цэгт хаяулахгүйгээр бид өөрсдөө очоод худалдаад авчихдаг. Хотод бол 1 тонн цаасыг 200 мянган төгрөгөөр ч юм уу авдаг бол энд 500-600 кг цаасыг 10 мянгаар авчих боломжтой. Ингэхдээ цаасны ямар ч төрлийн бүх хаягдлыг ашиглаж болдог. Ганц шаардлага нь бохир цаас байж болохгүй.
-
--Эко түлшнээс өөр үйлдвэрлэж байгаа ямар нэгэн зүйл бий юу?
-
--Хаягдал цаас, ургамлын болон малын гаралтай хаягдал тосоор бүх төрлийн түлшийг богино хугацаанд асаах эко галлагч бүтээсэн. Энэ бүтээгдэхүүнийг 1000 төгрөгөөр худалдаж аваад нэг сар хэрэглэх болмжтой. Мөн аргалаас газ гаргах технологийг туршиж байна.`,
-  },
-];
-
-let nextCarId = articles.length;
-
-app.get("/categories", (req, res) => {
-  res.status(200);
-  res.json(categories);
-});
-
-app.get("/articles", (req, res) => {
-  res.status(200);
-  res.json(articles);
-});
-
-app.get("/articles/:id", (req, res) => {
+app.get("/categories/:id", (req, res) => {
   const { id } = req.params;
-  let result = null;
-  for (const art of articles) {
-    if (id === art.id) {
-      result = art;
+  let category = null;
+
+  for (const row of categories) {
+    if (id == row.id) {
+      category = row;
       break;
     }
   }
-  res.json(result);
+
+  res.json(category);
 });
 
-app.delete("/articles/:id", (res, req) => {
+app.delete("/categories/:id", (req, res) => {
   const { id } = req.params;
-  articles = articles.filter((art) => art.id !== id);
+  categories = categories.filter((row) => row.id !== Number(id));
   updateCategoriesFile();
   res.json(id);
 });
 
-app.post("/articles", jsonParser, (req, res) => {
+const bodyParser = require("body-parser");
+const { match } = require("assert");
+const jsonParser = bodyParser.json();
+
+app.post("/categories", jsonParser, (req, res) => {
   const { name } = req.body;
-  const newArticles = { id: nextCarId++, name };
-  articles.push(newArticles);
+  const newCategory = { id: nextCatId++, name };
+  categories.push(newCategory);
   updateCategoriesFile();
-
-  res.send(newArticles);
+  res.json(newCategory);
 });
 
-app.put("/articles/:id", (req, res) => {
-  const { id } = req.params;
-  let result = null;
-  for (const art of articles) {
-    if (id === art.id) {
-      result = art;
-      break;
-    }
-  }
-  res.json(result);
-});
-
-app.put("/articles/:id", (res, req) => {
+app.put("/categories/:id", jsonParser, (req, res) => {
   const { id } = req.params;
   const { name } = req.body;
 
-  const index = articles.findIndex((item) => item.id === Number(id));
-  if (index === -2) {
-    res.status(400).json("Bad requist");
-  } else {
-    const updateCategory = articles[index];
-    updateCategory.name = name;
-    articles[index] = updateCategory;
-    res.json(updateCategory);
-  }
+  let updatedCat;
+  categories = categories.map((row) => {
+    if (row.id === Number(id)) {
+      updatedCat = { id: Number(id), name };
+      return updatedCat;
+    }
+    return row;
+  });
+  updateCategoriesFile();
+  res.json(updatedCat);
 });
+
 let products = JSON.parse(fs.readFileSync("MOCK_DATA.json", "utf-8"));
+
 app.get("/products", (req, res) => {
   let { pageSize, page, priceTo, priceFrom, q } = req.query;
   pageSize = Number(pageSize) || 10;
   page = Number(page) || 1;
-
   let start, end;
 
   start = (page - 1) * pageSize;
   end = page * pageSize;
 
   const newProducts = products.filter((product) => {
-    console.log(product.price);
     let matching = true;
     if (q) {
       matching = product.name.toLowerCase().includes(q.toLowerCase());
     }
-    if (q) {
-      matching = product.price;
-    }
     return matching;
   });
-  const item = newProducts.slice(start, end);
+
+  const items = newProducts.slice(start, end);
 
   res.json({
     total: newProducts.length,
-    totalPage: Math.ceil(newProducts.length / pageSize),
+    totalPages: Math.ceil(newProducts.length / pageSize),
     page,
     pageSize,
-    item,
+    items,
   });
 });
 
+let menuPositions = JSON.parse(fs.readFileSync("menuPositions.json", "utf-8"));
+
+app.get("/menu-positions", (req, res) => {
+  res.json(menuPositions);
+});
+
+app.get("/menu-positions/:id", (req, res) => {
+  const { id } = req.params;
+  let position = null;
+
+  for (const row of menuPositions) {
+    if (id == row.id) {
+      position = row;
+      break;
+    }
+  }
+  res.json(position);
+});
+
+let nextPosId = menuPositions.length + 1;
+
+app.post("/menu-positions", jsonParser, (req, res) => {
+  const { name, alias } = req.body;
+  const newPosition = { id: nextPosId++, name, alias };
+  menuPositions.push(newPosition);
+  fs.writeFileSync("menuPositions.json", JSON.stringify(menuPositions));
+  res.json(newPosition);
+});
+
+app.delete("/menu-positions/:id", (req, res) => {
+  const { id } = req.params;
+  menuPositions = menuPositions.filter((row) => row.id !== Number(id));
+  fs.writeFileSync("menuPositions.json", JSON.stringify(menuPositions));
+  res.json(id);
+});
+
+let menus = JSON.parse(fs.readFileSync("menus.json", "utf-8"));
+let nextMenuId = menus.length + 1;
+
+app.get("/menus", (req, res) => {
+  const { positionId } = req.query;
+  if (!positionId) return res.statusCode(400).json("PositionId required!");
+
+  const result = menus.filter((menu) => {
+    return menu.positionId === Number(positionId);
+  });
+  return res.json(result);
+});
+
+app.get("/menus/:positionAlias", (req, res) => {
+  const { positionAlias } = req.params;
+  let position = null;
+
+  for (const row of menuPositions) {
+    if (positionAlias == row.alias) {
+      position = row;
+      break;
+    }
+  }
+
+  if (!position) return res.status(400).json("Position not found");
+
+  const result = menus.filter((menu) => {
+    return menu.positionId === position.id;
+  });
+  return res.json(result);
+});
+
+app.post("/menus", jsonParser, (req, res) => {
+  const { name, link, newTab, positionId, ordering } = req.body;
+  const newMenu = { id: nextMenuId, name, link, newTab, positionId, ordering };
+  menus = [...menus, newMenu];
+  fs.writeFileSync("menus.json", JSON.stringify(menus));
+  return res.json(newMenu);
+});
+
+app.delete("/menus/:id", (req, res) => {
+  const { id } = req.params;
+  menus = menus.filter((row) => row.id !== Number(id));
+  fs.writeFileSync("menus.json", JSON.stringify(menus));
+  res.json(id);
+});
+
 app.listen(port, () => {
-  console.log("http//localhost:" + port);
+  console.log("http://localhost:" + port);
 });
