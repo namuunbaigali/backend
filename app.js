@@ -4,7 +4,14 @@ const cors = require("cors");
 const fs = require("fs");
 
 const app = express();
+const dotenv = require("dotenv");
+dotenv.config();
 
+const openaiPackage = require("openai");
+const configuration = new openaiPackage.Configuration({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+const openai = new openaiPackage.OpenAIApi(configuration);
 app.use(cors());
 
 const port = 8000;
@@ -182,7 +189,18 @@ app.delete("/menus/:id", (req, res) => {
   fs.writeFileSync("menus.json", JSON.stringify(menus));
   res.json(id);
 });
+app.get("/generate", async (req, res) => {
+  const prompt = window.prompt(req.query);
+  const response = await openai.createImage({
+    prompt: "a white siamese cat",
+    n: 1,
+    size: "256x256",
+  });
+  res.json(response.data.data[0].url);
+});
 
-app.listen(port, () => {
+app.listen(port, async () => {
   console.log("http://localhost:" + port);
+  const response = await openai.listEngines();
+  console.log(response);
 });
